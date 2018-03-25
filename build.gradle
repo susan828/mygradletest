@@ -1,0 +1,67 @@
+apply plugin: 'java'
+apply plugin: 'war'
+apply plugin: 'idea'
+apply plugin: 'maven'
+apply plugin: 'org.akhikhl.gretty'
+
+group 'mygradletest'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'org.akhikhl.gretty:gretty:2.0.0'
+    }
+}
+
+if (!project.plugins.findPlugin(org.akhikhl.gretty.GrettyPlugin))
+    project.apply(plugin: org.akhikhl.gretty.GrettyPlugin)
+
+gretty {
+    httpEnabled = true
+    servletContainer = 'tomcat8'
+    contextPath = '/mygradle'
+    host = 'localhost'
+    httpPort = 8080
+    scanInterval = 1
+    fastReload = true
+    inplaceMode = 'soft'
+    loggingLevel = 'DEBUG'
+    consoleLogEnabled = true
+    // ... many more properties
+}
+/*
+私服配置
+dependencies {
+    repositories {
+        maven {
+            url: 'http://nexus.mycompny.xxx'
+        }
+    }
+}*/
+
+dependencies {
+    compile (
+            'org.springframework:spring-context:5.0.4.RELEASE',
+            'joda-time:joda-time:2.9.4'
+    )
+    testCompile(
+            'junit:junit:4.1.2'
+    )
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+[compileJava, javadoc, compileTestJava]*.options*.encoding = 'UTF-8'
